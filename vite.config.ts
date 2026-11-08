@@ -17,8 +17,8 @@ export default defineConfig({
       start_url: '/matchraknare/',
       scope: '/matchraknare/',
       display: 'standalone',
-      theme_color: '#142e28',
-      background_color: '#f4f3ed',
+      theme_color: '#061d13',
+      background_color: '#faf9f5',
       icons: [
         { src: 'icons/icon-192.png', sizes: '192x192', type: 'image/png', purpose: 'any' },
         { src: 'icons/icon-512.png', sizes: '512x512', type: 'image/png', purpose: 'any' },

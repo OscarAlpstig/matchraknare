@@ -123,3 +123,7 @@ Ikonerna är ogenomskinliga PNG-filer: 192 och 512 px för Android, 512 px med s
 ## Ljust och mörkt tema
 
 **Utseende** längst ned erbjuder **Följ enheten** (standard), **Ljust** och **Mörkt**. Enhetens tema följs även om det ändras medan appen är öppen. Temavalet sparas separat från matchen i `malraknare.theme.v1` och fungerar offline. Om lagring inte är tillgänglig fungerar valet för den öppna sidan och ett meddelande visas. Matchen påverkas inte. Installationsinformationen ligger ovanför informationen om kakor och lokal lagring.
+
+## Resultattavlans layout
+
+Layouten följer bildförslag 2, Mörk resultattavla: två poängkolumner med en tunn avdelare, färgmarkeringar för lagen och stora siffror. Målknapparna följs direkt av en bred **Ny match**-knapp med fortsatt bekräftelse. Sparstatus, utseende och utfällbar information ligger under matchkontrollerna. Ljust och mörkt tema använder samma layout. Sifferstorleken anpassas till antalet siffror så att även stora poängtal ryms i respektive kolumn.

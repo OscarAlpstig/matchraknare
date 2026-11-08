@@ -25,7 +25,7 @@ export default function App() {
   return (
     <main>
       <header>
-        <div className="heading-row"><h1>Målräknare<span>.</span></h1></div>
+        <h1>Målräknare</h1>
       </header>
       {initial.warning && <p role="alert" className="warning">{initial.warning}</p>}
       {!saved && <p role="alert" className="warning">Matchen kan inte sparas i webbläsaren. Ställningen försvinner när sidan stängs eller laddas om.</p>}
@@ -35,14 +35,12 @@ export default function App() {
           onName={name => setMatch(current => ({ ...current, teams: current.teams.map((t, i) =>
             i === index ? { ...t, name } : t) as typeof current.teams }))} />)}
       </div>
-      <p className="hint">Tryck på lagnamnen för att ändra dem. Feltryck? Ta bort ett mål.</p>
-      <div className="match-actions">
-        <p className="save-status"><span aria-hidden="true">{saved ? '●' : '○'}</span> {saved ? 'Sparas på den här enheten' : 'Kan inte sparas'}</p>
-        <button className="new-match" onClick={() => { dialog.current?.showModal(); cancelButton.current?.focus() }}>Ny match <span aria-hidden="true">↗</span></button>
-      </div>
+      <button className="new-match" onClick={() => { dialog.current?.showModal(); cancelButton.current?.focus() }}>Ny match</button>
       <footer>
-        <p>Uppgifterna finns bara på den här enheten och synkroniseras inte mellan telefoner.</p>
-        <ThemeSelect />
+        <div className="preferences">
+          <p className="save-status"><span aria-hidden="true">{saved ? '●' : '○'}</span> {saved ? 'Sparas på enheten' : 'Kan inte sparas'}</p>
+          <ThemeSelect />
+        </div>
         <OfflineSupport match={match} />
         <details className="storage-info">
           <summary>Kakor och lokal lagring</summary>
@@ -59,6 +57,7 @@ export default function App() {
           <p>För offline-läget sparas även appens filer på enheten med en service worker. De kan rensas
             tillsammans med webbplatsdata. Nya appversioner kan ersätta gamla filer; matchen sparas separat.</p>
         </details>
+        <p className="hint">Tryck på ett lagnamn för att ändra det. Matchen sparas bara på den här enheten.</p>
       </footer>
       <p className="sr-only" role="status" aria-live="polite" aria-atomic="true">{announcement}</p>
       <dialog ref={dialog} aria-labelledby="dialog-title" aria-describedby="dialog-description">

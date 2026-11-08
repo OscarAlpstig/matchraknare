@@ -1,3 +1,4 @@
+import type { CSSProperties } from 'react'
 import type { Team } from './match'
 
 interface Props {
@@ -16,8 +17,9 @@ export function TeamCard({ team, index, onName, onGoal }: Props) {
       <input id={`team-${index}`} value={team.name} maxLength={40}
         placeholder={side} onChange={event => onName(event.target.value)}
         aria-label={`${side}ets namn`} autoComplete="off" />
-      <output className="score" aria-label={`${name}: ${team.goals} mål`}>{team.goals}</output>
-      <span className="score-caption" aria-hidden="true">MÅL</span>
+      <span className="team-accent" aria-hidden="true" />
+      <output className="score" aria-label={`${name}: ${team.goals} mål`}
+        style={{ '--score-digits': String(team.goals).length } as CSSProperties}>{team.goals}</output>
       <button className="add-goal" onClick={() => onGoal(1)}
         disabled={team.goals === Number.MAX_SAFE_INTEGER} aria-label={`Lägg till mål för ${name}`}>
         <span aria-hidden="true">+</span> Lägg till mål
