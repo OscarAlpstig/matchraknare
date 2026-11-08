@@ -67,12 +67,17 @@ test('kallstart offline efter stängd webbläsare, måländring och ännu en oms
     for (const icon of manifest.icons) {
       expect((await page.request.get(origin + base + icon.src)).ok()).toBe(true)
     }
+    await page.getByLabel('Utseende').selectOption('dark')
+    await expect(page.locator('html')).toHaveAttribute('data-theme', 'dark')
+    // Keep the mobile preview focused on the match and collapsed footer.
+    await page.getByText('Installera och använd offline').click()
     await page.screenshot({ path: 'test-results/pwa-mobile.png', fullPage: true })
     await context.close()
     context = await chromium.launchPersistentContext(profile, { headless: true, offline: true })
     page = context.pages()[0]
     await page.goto(origin + base)
     await expect(page.getByLabel('IFK: 1 mål')).toBeVisible()
+    await expect(page.locator('html')).toHaveAttribute('data-theme', 'dark')
     await page.getByRole('button', { name: 'Lägg till mål för IFK' }).click()
     await page.getByRole('button', { name: 'Lägg till mål för Bortalag' }).click()
     await expect(page.getByLabel('IFK: 2 mål')).toBeVisible()

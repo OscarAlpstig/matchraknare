@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import { OfflineSupport } from './OfflineSupport'
+import { ThemeSelect } from './ThemeSelect'
 import { TeamCard } from './TeamCard'
 import { loadMatch, saveMatch } from './match'
 
@@ -41,11 +42,14 @@ export default function App() {
       </div>
       <footer>
         <p>Uppgifterna finns bara på den här enheten och synkroniseras inte mellan telefoner.</p>
+        <ThemeSelect />
+        <OfflineSupport match={match} />
         <details className="storage-info">
           <summary>Kakor och lokal lagring</summary>
           <p>Målräknaren använder webbläsarens lokala lagring (localStorage) för att spara
-            lagnamn och målantal. Det enda syftet är att behålla matchen när du laddar om
+            lagnamn och målantal. Syftet är att behålla matchen när du laddar om
             sidan eller stänger och öppnar fliken igen.</p>
+          <p>Ditt val av ljust, mörkt eller enhetens tema sparas också lokalt för att behålla utseendet till nästa besök.</p>
           <p>Appen sätter inga egna kakor och använder ingen lagring för reklam,
             spårning eller besöksstatistik. Matchuppgifterna skickas inte till någon server
             och synkroniseras inte mellan telefoner.</p>
@@ -55,7 +59,6 @@ export default function App() {
           <p>För offline-läget sparas även appens filer på enheten med en service worker. De kan rensas
             tillsammans med webbplatsdata. Nya appversioner kan ersätta gamla filer; matchen sparas separat.</p>
         </details>
-        <OfflineSupport match={match} />
       </footer>
       <p className="sr-only" role="status" aria-live="polite" aria-atomic="true">{announcement}</p>
       <dialog ref={dialog} aria-labelledby="dialog-title" aria-describedby="dialog-description">

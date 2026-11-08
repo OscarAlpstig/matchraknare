@@ -67,7 +67,7 @@ PWA-stödet ligger separat i `src/OfflineSupport.tsx` och `vite.config.ts`. Matc
 
 ## Kakor och lokal lagring
 
-Längst ned i appen finns utfällbar information om lagringen. Appen använder `localStorage` enbart för att behålla lagnamn och mål vid omladdning och när fliken öppnas igen. Ingen automatisk utgångstid finns; uppgifterna kan tas bort genom att rensa webbplatsdata. Ny match nollställer mål men behåller namn. Appen sätter inga egna kakor och har ingen reklam, spårning eller besöksstatistik. Matchuppgifter skickas inte till en server. För offline-start sparar en service worker även appens HTML, JavaScript, CSS, manifest och ikoner i Cache Storage. Appfiler kan ersättas vid en uppdatering utan att matchlagringen rensas. Cache och matchdata kan tas bort via webbläsarens webbplatsdata.
+Längst ned i appen finns utfällbar information om lagringen. Appen använder `localStorage` för att behålla lagnamn och mål vid omladdning och när fliken öppnas igen, samt för att komma ihåg användarens temaval. Ingen automatisk utgångstid finns; uppgifterna kan tas bort genom att rensa webbplatsdata. Ny match nollställer mål men behåller namn. Appen sätter inga egna kakor och har ingen reklam, spårning eller besöksstatistik. Matchuppgifter skickas inte till en server. För offline-start sparar en service worker även appens HTML, JavaScript, CSS, manifest och ikoner i Cache Storage. Appfiler kan ersättas vid en uppdatering utan att matchlagringen rensas. Cache och matchdata kan tas bort via webbläsarens webbplatsdata.
 
 Bedömningen för den aktuella funktionen är att lagringen behövs för den begärda tjänsten att behålla matchen, och därför används ingen samtyckesbanner. Se [PTS om nödvändiga kakor och samtycke](https://www.pts.se/internet-och-telefoni/kakor-cookies/). Om statistik, reklam eller annan lagring läggs till måste bedömningen göras om.
 
@@ -119,3 +119,7 @@ Verifierat lokalt: lint, produktionsbygge, 13 komponenttester och två PWA-webbl
 **Återstår manuellt före release:** installation i aktuell Safari på iPhone och Chrome på Android, exakta menytexter och ikonvisning; öppna hemskärmsappen online tills redo-status visas, stäng appen, slå på flygplansläge, öppna igen, ändra mål och kontrollera ställningen efter ännu en stängning och start. Prova även **Senare** och godkänd uppdatering på telefonerna. Inga fysiska telefoner har varit tillgängliga i denna verifiering.
 
 Ikonerna är ogenomskinliga PNG-filer: 192 och 512 px för Android, 512 px med säker marginal för maskning samt 180 px Apple touch icon. De kan återskapas utan externa Python-bibliotek med `python3 scripts/generate-icons.py`.
+
+## Ljust och mörkt tema
+
+**Utseende** längst ned erbjuder **Följ enheten** (standard), **Ljust** och **Mörkt**. Enhetens tema följs även om det ändras medan appen är öppen. Temavalet sparas separat från matchen i `malraknare.theme.v1` och fungerar offline. Om lagring inte är tillgänglig fungerar valet för den öppna sidan och ett meddelande visas. Matchen påverkas inte. Installationsinformationen ligger ovanför informationen om kakor och lokal lagring.

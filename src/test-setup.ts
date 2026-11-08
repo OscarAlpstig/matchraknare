@@ -9,3 +9,5 @@ afterEach(() => { cleanup(); localStorage.clear(); vi.restoreAllMocks() })
 HTMLDialogElement.prototype.showModal = function () { this.setAttribute('open', '') }
 HTMLDialogElement.prototype.close = function () { this.removeAttribute('open') }
 Object.defineProperty(navigator, 'serviceWorker', { configurable: true, value: {} })
+
+afterEach(() => { delete document.documentElement.dataset.theme })
