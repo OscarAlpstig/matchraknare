@@ -45,21 +45,39 @@ describe('Målräknare', () => {
     expect(team('Bortalag').getByLabelText('IFK: 1 mål')).toHaveTextContent('1')
   })
 
-  it('kräver bekräftelse och låter användaren avbryta en ny match', async () => {
+  it('kräver bekräftelse, behåller hemmalagets namn och återställer bortalaget även efter omladdning', async () => {
     const user = userEvent.setup()
-    render(<App />)
-    await user.click(team('Hemmalag').getByRole('button', { name: /Lägg till/ }))
+    const initial = { version: 1, teams: [{ name: 'IFK', goals: 3 }, { name: 'United', goals: 2 }] }
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(initial))
+    const first = render(<App />)
     await user.click(screen.getByRole('button', { name: 'Ny match' }))
     expect(screen.getByRole('dialog')).toBeVisible()
+    expect(screen.getByRole('dialog')).toHaveTextContent('bortalagets namn återställs till Bortalag')
     expect(screen.getByRole('button', { name: 'Avbryt' })).toHaveFocus()
     await user.click(screen.getByRole('button', { name: 'Avbryt' }))
-    expect(team('Hemmalag').getByLabelText('Hemmalag: 1 mål')).toHaveTextContent('1')
+    expect(screen.getByLabelText('Hemmalagets namn')).toHaveValue('IFK')
+    expect(screen.getByLabelText('Bortalagets namn')).toHaveValue('United')
+    expect(team('Hemmalag').getByLabelText('IFK: 3 mål')).toBeInTheDocument()
+    expect(team('Bortalag').getByLabelText('United: 2 mål')).toBeInTheDocument()
+    expect(JSON.parse(localStorage.getItem(STORAGE_KEY)!)).toEqual(initial)
+
     await user.click(screen.getByRole('button', { name: 'Ny match' }))
     await user.click(screen.getByRole('button', { name: 'Nollställ och starta' }))
     expect(screen.queryByRole('dialog')).not.toBeInTheDocument()
-    expect(team('Hemmalag').getByLabelText('Hemmalag: 0 mål')).toHaveTextContent('0')
-    const state = JSON.parse(localStorage.getItem(STORAGE_KEY)!)
-    expect(state.teams.map((t: { goals: number }) => t.goals)).toEqual([0, 0])
+    expect(screen.getByLabelText('Hemmalagets namn')).toHaveValue('IFK')
+    expect(screen.getByLabelText('Bortalagets namn')).toHaveValue('Bortalag')
+    expect(team('Hemmalag').getByLabelText('IFK: 0 mål')).toBeInTheDocument()
+    expect(team('Bortalag').getByLabelText('Bortalag: 0 mål')).toBeInTheDocument()
+    expect(JSON.parse(localStorage.getItem(STORAGE_KEY)!)).toEqual({
+      version: 1, teams: [{ name: 'IFK', goals: 0 }, { name: 'Bortalag', goals: 0 }],
+    })
+
+    first.unmount()
+    render(<App />)
+    expect(screen.getByLabelText('Hemmalagets namn')).toHaveValue('IFK')
+    expect(screen.getByLabelText('Bortalagets namn')).toHaveValue('Bortalag')
+    expect(team('Hemmalag').getByLabelText('IFK: 0 mål')).toBeInTheDocument()
+    expect(team('Bortalag').getByLabelText('Bortalag: 0 mål')).toBeInTheDocument()
   })
 
   it.each(['{trasig', 'null', '{"version":1,"teams":[]}', '{"version":1,"teams":[{"name":"A","goals":-1},{"name":"B","goals":0}]}'])(

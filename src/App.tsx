@@ -52,8 +52,8 @@ export default function App() {
             spårning eller besöksstatistik. Matchuppgifterna skickas inte till någon server
             och synkroniseras inte mellan telefoner.</p>
           <p>Uppgifterna har ingen automatisk utgångstid. Du kan ta bort dem genom att
-            rensa webbplatsdata i webbläsarens inställningar. Ny match nollställer målen
-            men behåller lagnamnen.</p>
+            rensa webbplatsdata i webbläsarens inställningar. Ny match nollställer målen,
+            behåller hemmalagets namn och återställer bortalagets namn till Bortalag.</p>
           <p>För offline-läget sparas även appens filer på enheten med en service worker. De kan rensas
             tillsammans med webbplatsdata. Nya appversioner kan ersätta gamla filer; matchen sparas separat.</p>
         </details>
@@ -62,12 +62,15 @@ export default function App() {
       <p className="sr-only" role="status" aria-live="polite" aria-atomic="true">{announcement}</p>
       <dialog ref={dialog} aria-labelledby="dialog-title" aria-describedby="dialog-description">
         <h2 id="dialog-title">Starta en ny match?</h2>
-        <p id="dialog-description">Båda lagens mål nollställs. Lagnamnen behålls. Det går inte att ångra.</p>
+        <p id="dialog-description">Båda lagens mål nollställs. Hemmalagets namn behålls och bortalagets namn återställs till Bortalag. Det går inte att ångra.</p>
         <div className="dialog-actions">
           <button ref={cancelButton} onClick={() => dialog.current?.close()}>Avbryt</button>
           <button className="confirm" onClick={() => {
-            setMatch(current => ({ ...current, teams: current.teams.map(team => ({ ...team, goals: 0 })) as typeof current.teams }))
-            setAnnouncement('Ny match startad. Båda lagen har noll mål.')
+            setMatch(current => ({ ...current, teams: [
+              { ...current.teams[0], goals: 0 },
+              { name: 'Bortalag', goals: 0 },
+            ] }))
+            setAnnouncement('Ny match startad. Båda lagen har noll mål. Bortalagets namn har återställts till Bortalag.')
             dialog.current?.close()
           }}>Nollställ och starta</button>
         </div>
