@@ -57,7 +57,7 @@ Bygg- och publiceringsmönstret är hämtat från [Huntingseasons package.json](
 
 Semantiska knappar, synlig tangentbordsfokus, namngivna inmatningar och lagregioner samt en live-region för måländringar ger stöd för tangentbord och skärmläsare. Native `dialog` sköter fokuslåsning, Escape och återgång av fokus i moderna webbläsare. Automatester använder en minimal dialogshim; verklig fokuslåsning och skärmläsarupplevelse behöver också verifieras manuellt på måltelefonerna.
 
-Nästa möjliga steg är manifest, appikoner och service worker för installation och offline-start. De ingår inte i denna version. React-vyn, lagringen och presentationen är separerade så att det kan läggas till utan server eller ombyggd matchlogik. Publicering och GitHub Pages-inställningar återstår tills ägaren uttryckligen ber om det.
+PWA-stödet ligger separat i `src/OfflineSupport.tsx` och `vite.config.ts`. Matchlogiken och den befintliga `localStorage`-nyckeln är oförändrade. Ändringen för offline-stöd är förberedd lokalt för granskning och har inte publicerats.
 
 ## Verifiering av första versionen
 
@@ -67,6 +67,55 @@ Nästa möjliga steg är manifest, appikoner och service worker för installatio
 
 ## Kakor och lokal lagring
 
-Längst ned i appen finns utfällbar information om lagringen. Appen använder `localStorage` enbart för att behålla lagnamn och mål vid omladdning och när fliken öppnas igen. Ingen automatisk utgångstid finns; uppgifterna kan tas bort genom att rensa webbplatsdata. Ny match nollställer mål men behåller namn. Appen sätter inga egna kakor och har ingen reklam, spårning eller besöksstatistik. Matchuppgifter skickas inte till en server.
+Längst ned i appen finns utfällbar information om lagringen. Appen använder `localStorage` enbart för att behålla lagnamn och mål vid omladdning och när fliken öppnas igen. Ingen automatisk utgångstid finns; uppgifterna kan tas bort genom att rensa webbplatsdata. Ny match nollställer mål men behåller namn. Appen sätter inga egna kakor och har ingen reklam, spårning eller besöksstatistik. Matchuppgifter skickas inte till en server. För offline-start sparar en service worker även appens HTML, JavaScript, CSS, manifest och ikoner i Cache Storage. Appfiler kan ersättas vid en uppdatering utan att matchlagringen rensas. Cache och matchdata kan tas bort via webbläsarens webbplatsdata.
 
 Bedömningen för den aktuella funktionen är att lagringen behövs för den begärda tjänsten att behålla matchen, och därför används ingen samtyckesbanner. Se [PTS om nödvändiga kakor och samtycke](https://www.pts.se/internet-och-telefoni/kakor-cookies/). Om statistik, reklam eller annan lagring läggs till måste bedömningen göras om.
+
+## Installera och använd offline
+
+Den utfällbara sektionen **Installera och använd offline** finns längst ned, intill lagringsinformationen. Båda telefoninstruktionerna är alltid tillgängliga. Ingen enhetsdetektering används.
+
+### iPhone
+
+Öppna Målräknare i Safari medan du har internet. Tryck på Dela och välj **Lägg till på hemskärmen**. Välj **Öppna som webbapp** om alternativet visas och tryck på **Lägg till**. Starta sedan Målräknare från ikonen på hemskärmen.
+
+### Android
+
+Öppna Målräknare i Chrome medan du har internet. Tryck på menyn **⋮** och välj **Installera app** eller motsvarande installationsval. Följ anvisningarna och starta sedan Målräknare från ikonen.
+
+### Offline-start och uppdateringar
+
+Öppna sidan med internet och vänta tills installationssektionen visar **Redo att användas offline på den här enheten**. Statusen ges efter att service workern installerat filerna; vid senare starter kontrolleras också att sparad HTML finns kvar. Öppna även hemskärmsappen online första gången och kontrollera statusen där. En hemskärmsapp kan ha separat lagring från webbläsaren beroende på plattform; utgå inte från att en redan påbörjad match flyttas över.
+
+HTML, JavaScript (inklusive dynamiska moduler), CSS, manifest och ikoner förlagras med Workbox. Navigering inom `/matchraknare/` använder den sparade startsidan utan nät. Service workern registreras bara i produktionsbygget; `npm run dev` har inte offline-stöd. Manifestets `id`, `start_url` och `scope`, liksom service workerns scope och navigeringsreserv, pekar på `/matchraknare/`. GitHub Pages-arbetsflödet är oförändrat.
+
+En upptäckt ny version väntar i bakgrunden. **Uppdatera nu** sparar matchen innan den nya versionen aktiveras och sidan laddas om. Om matchen inte kan sparas avbryts uppdateringen och ett fel visas. **Senare** döljer meddelandet utan omladdning; valet finns kvar i installationssektionen. Om alla appflikar stängs kan webbläsaren aktivera den väntande versionen inför nästa start. Ingen pågående öppen match laddas då om. Uppdateringar rensar inte `localStorage`.
+
+Offline kräver ett lyckat första besök över HTTPS (eller localhost vid test). Första besöket utan nät fungerar inte. Webbläsaren kan rensa cache eller matchdata, exempelvis vid lagringsbrist; privat surfning kan begränsa funktionerna. Installation är ingen garanti för permanent lagring eller säkerhetskopiering. Namn och mål stannar på enheten, utan konto eller synkronisering.
+
+### Testa produktionsbygget
+
+```sh
+npm ci
+npm run lint
+npm test
+npm run build
+npm run preview
+```
+
+Öppna `http://localhost:4173/matchraknare/`. PWA-test kräver localhost eller HTTPS; en vanlig HTTP-adress med datorns LAN-IP räcker inte för att testa installation på en telefon.
+
+Automatiska webbläsartester:
+
+```sh
+npx playwright install chromium
+npm run test:pwa
+```
+
+Testerna serverar verkliga `dist` under `/matchraknare/` och kör i Chromium. De använder en temporär beständig webbläsarprofil, stänger hela testwebbläsaren, startar den utan nät, ändrar mål och startar om utan nät ännu en gång. Namn och båda lagens poäng kontrolleras. Ett andra test simulerar en senare publicering genom att ändra serverad HTML och dess precache-revision: versionen väntar, **Senare** lämnar matchen aktiv, en godkänd uppdatering laddar den nya versionen och matchen finns kvar även vid en offline-omladdning. Manifest, ikonsökvägar och offlineberedskap kontrolleras också. Testerna publicerar inget och ändrar inte källfiler eller `dist`.
+
+Verifierat lokalt: lint, produktionsbygge, 13 komponenttester och två PWA-webbläsartester passerar. Mobilskärmbild från Chromium finns efter körningen i `test-results/pwa-mobile.png`. Det är simulerat nätbortfall, inte en fysisk telefons flygplansläge.
+
+**Återstår manuellt före release:** installation i aktuell Safari på iPhone och Chrome på Android, exakta menytexter och ikonvisning; öppna hemskärmsappen online tills redo-status visas, stäng appen, slå på flygplansläge, öppna igen, ändra mål och kontrollera ställningen efter ännu en stängning och start. Prova även **Senare** och godkänd uppdatering på telefonerna. Inga fysiska telefoner har varit tillgängliga i denna verifiering.
+
+Ikonerna är ogenomskinliga PNG-filer: 192 och 512 px för Android, 512 px med säker marginal för maskning samt 180 px Apple touch icon. De kan återskapas utan externa Python-bibliotek med `python3 scripts/generate-icons.py`.

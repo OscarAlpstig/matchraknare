@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
+import { OfflineSupport } from './OfflineSupport'
 import { TeamCard } from './TeamCard'
 import { loadMatch, saveMatch } from './match'
 
@@ -51,7 +52,10 @@ export default function App() {
           <p>Uppgifterna har ingen automatisk utgångstid. Du kan ta bort dem genom att
             rensa webbplatsdata i webbläsarens inställningar. Ny match nollställer målen
             men behåller lagnamnen.</p>
+          <p>För offline-läget sparas även appens filer på enheten med en service worker. De kan rensas
+            tillsammans med webbplatsdata. Nya appversioner kan ersätta gamla filer; matchen sparas separat.</p>
         </details>
+        <OfflineSupport match={match} />
       </footer>
       <p className="sr-only" role="status" aria-live="polite" aria-atomic="true">{announcement}</p>
       <dialog ref={dialog} aria-labelledby="dialog-title" aria-describedby="dialog-description">

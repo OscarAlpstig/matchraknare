@@ -8,3 +8,4 @@ afterEach(() => { cleanup(); localStorage.clear(); vi.restoreAllMocks() })
 // are supplied by the native HTML dialog, not by this test shim.
 HTMLDialogElement.prototype.showModal = function () { this.setAttribute('open', '') }
 HTMLDialogElement.prototype.close = function () { this.removeAttribute('open') }
+Object.defineProperty(navigator, 'serviceWorker', { configurable: true, value: {} })

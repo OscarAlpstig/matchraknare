@@ -4,6 +4,10 @@ import { describe, expect, it, vi } from 'vitest'
 import App from './App'
 import { STORAGE_KEY } from './match'
 
+vi.mock('virtual:pwa-register/react', () => ({
+  useRegisterSW: () => ({ offlineReady: [false], needRefresh: [false], updateServiceWorker: vi.fn() }),
+}))
+
 function team(side: string) { return within(screen.getByRole('region', { name: side })) }
 
 describe('Målräknare', () => {
