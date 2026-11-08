@@ -64,3 +64,9 @@ Nästa möjliga steg är manifest, appikoner och service worker för installatio
 `npm run build`, `npm run lint` och samtliga nio tester har passerat. Mobilvyn har också kontrollerats i webbläsare, inklusive måländring, sparad ställning efter omladdning samt Escape och återställt fokus från bekräftelsedialogen. Manuell kontroll på fysiska telefoner och med skärmläsare återstår.
 
 `npm audit` rapporterar sju måttliga poster i utvecklingsberoendena, alla kopplade till `minimatch` via TypeScript ESLint. Kompatibel `npm audit fix` har körts, men tar inte bort dessa poster. De ingår inte i produktionspaketet. En separat uppgradering av lintverktygen behöver utvärderas; ingen tvingad versionsändring har gjorts.
+
+## Kakor och lokal lagring
+
+Längst ned i appen finns utfällbar information om lagringen. Appen använder `localStorage` enbart för att behålla lagnamn och mål vid omladdning och när fliken öppnas igen. Ingen automatisk utgångstid finns; uppgifterna kan tas bort genom att rensa webbplatsdata. Ny match nollställer mål men behåller namn. Appen sätter inga egna kakor och har ingen reklam, spårning eller besöksstatistik. Matchuppgifter skickas inte till en server.
+
+Bedömningen för den aktuella funktionen är att lagringen behövs för den begärda tjänsten att behålla matchen, och därför används ingen samtyckesbanner. Se [PTS om nödvändiga kakor och samtycke](https://www.pts.se/internet-och-telefoni/kakor-cookies/). Om statistik, reklam eller annan lagring läggs till måste bedömningen göras om.

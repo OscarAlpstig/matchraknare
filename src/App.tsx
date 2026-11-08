@@ -38,7 +38,21 @@ export default function App() {
         <p className="save-status"><span aria-hidden="true">{saved ? '●' : '○'}</span> {saved ? 'Sparas på den här enheten' : 'Kan inte sparas'}</p>
         <button className="new-match" onClick={() => { dialog.current?.showModal(); cancelButton.current?.focus() }}>Ny match <span aria-hidden="true">↗</span></button>
       </div>
-      <footer>Uppgifterna finns bara i den här webbläsaren på den här enheten och synkroniseras inte mellan telefoner.</footer>
+      <footer>
+        <p>Uppgifterna finns bara på den här enheten och synkroniseras inte mellan telefoner.</p>
+        <details className="storage-info">
+          <summary>Kakor och lokal lagring</summary>
+          <p>Målräknaren använder webbläsarens lokala lagring (localStorage) för att spara
+            lagnamn och målantal. Det enda syftet är att behålla matchen när du laddar om
+            sidan eller stänger och öppnar fliken igen.</p>
+          <p>Appen sätter inga egna kakor och använder ingen lagring för reklam,
+            spårning eller besöksstatistik. Matchuppgifterna skickas inte till någon server
+            och synkroniseras inte mellan telefoner.</p>
+          <p>Uppgifterna har ingen automatisk utgångstid. Du kan ta bort dem genom att
+            rensa webbplatsdata i webbläsarens inställningar. Ny match nollställer målen
+            men behåller lagnamnen.</p>
+        </details>
+      </footer>
       <p className="sr-only" role="status" aria-live="polite" aria-atomic="true">{announcement}</p>
       <dialog ref={dialog} aria-labelledby="dialog-title" aria-describedby="dialog-description">
         <h2 id="dialog-title">Starta en ny match?</h2>
